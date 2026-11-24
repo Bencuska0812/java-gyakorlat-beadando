@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelHub</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <h1>TravelHub</h1>
+    <nav id="nav">
+        <button data-page="home">Főoldal</button>
+        <button data-page="cities">Városok</button>
+        <button data-page="hotels">Szállodák</button>
+        <button data-page="offers">Utazások</button>
+        <button data-page="contact">Kapcsolat</button>
+        <button data-page="statistics">Statisztikák</button>
+        <button data-page="messages" class="admin">Üzenetek</button>
+        <button data-page="profile" class="auth">Profil</button>
+        <button data-page="admin" class="admin">Admin</button>
+        <button data-page="login" class="guest">Login</button>
+        <button data-page="register" class="guest">Regisztráció</button>
+        <button id="logout" class="auth">Kilépés</button>
+    </nav>
+</header>
+
+<main>
+
+    <section id="home" class="page">
+        <h2>Utazáskeresés</h2>
+
+        <label>Város
+            <select id="homeCity"></select>
+        </label>
+
+        <label>Maximális ár
+            <input id="homeMax" type="number">
+        </label>
+
+        <button id="homeSearch">Keresés</button>
+
+        <div id="homeResults"></div>
+    </section>
+
+    <section id="cities" class="page">
+        <h2>Városok</h2>
+        <div id="citiesList"></div>
+    </section>
+
+    <section id="hotels" class="page">
+        <h2>Szállodák</h2>
+
+        <label>Város
+            <select id="hotelCityFilter"></select>
+        </label>
+
+        <div id="hotelsList"></div>
+    </section>
+
+    <section id="offers" class="page">
+        <h2>Utazási ajánlatok</h2>
+
+        <label>Város
+            <select id="offerCity"></select>
+        </label>
+
+        <label>Maximális ár
+            <input id="offerMax" type="number">
+        </label>
+
+        <button id="offerSearch">Szűrés</button>
+
+        <div id="offersList"></div>
+    </section>
+
+    <section id="login" class="page">
+        <h2>Bejelentkezés</h2>
+
+        <form id="loginForm">
+            <label>Felhasználónév
+                <input name="username" required>
+            </label>
+
+            <label>Jelszó
+                <input name="password" type="password" required>
+            </label>
+
+            <button type="submit">Belépés</button>
+        </form>
+    </section>
+
+    <section id="register" class="page">
+        <h2>Regisztráció</h2>
+
+        <form id="registerForm">
+            <label>Felhasználónév
+                <input name="username" required>
+            </label>
+
+            <label>Email
+                <input name="email" type="email" required>
+            </label>
+
+            <label>Jelszó
+                <input name="password" type="password" required>
+            </label>
+
+            <button type="submit">Regisztráció</button>
+        </form>
+    </section>
+
+    <section id="profile" class="page">
+        <h2>Profil</h2>
+
+        <pre id="profileData"></pre>
+
+        <button id="profileRefresh">Frissítés</button>
+    </section>
+
+    <section id="contact" class="page">
+        <h2>Kapcsolat</h2>
+
+        <form id="contactForm">
+            <label>Név
+                <input name="name" required>
+            </label>
+
+            <label>Email
+                <input name="email" type="email" required>
+            </label>
+
+            <label>Tárgy
+                <input name="subject" required>
+            </label>
+
+            <label>Üzenet
+                <textarea name="message" rows="5" required></textarea>
+            </label>
+
+            <button type="submit">Üzenet küldése</button>
+        </form>
+    </section>
+
+    <section id="messages" class="page">
+        <h2>Üzenetek</h2>
+
+        <button id="messagesRefresh">Betöltés</button>
+
+        <div id="messagesList"></div>
+    </section>
+
+    <section id="statistics" class="page">
+        <h2>Statisztikák</h2>
+
+        <button id="statsRefresh">Betöltés</button>
+
+        <div id="statsData"></div>
+    </section>
+
+    <section id="admin" class="page">
+        <h2>Adminisztráció</h2>
+
+        <nav>
+            <button data-admin="cityAdmin">Városok</button>
+            <button data-admin="hotelAdmin">Szállodák</button>
+            <button data-admin="offerAdmin">Utazások</button>
+        </nav>
+
+        <section id="cityAdmin" class="adminTab">
+            <h3>Város CRUD</h3>
+
+            <select id="cityPick"></select>
+
+            <form id="cityForm">
+                <label>ID
+                    <input name="az" type="number" required>
+                </label>
+
+                <label>Név
+                    <input name="nev" required>
+                </label>
+
+                <label>Ország
+                    <input name="orszag" required>
+                </label>
+
+                <button type="submit">Mentés</button>
+                <button type="button" id="cityDelete">Törlés</button>
+                <button type="reset">Új</button>
+            </form>
+
+            <div id="cityAdminList"></div>
+        </section>
+
+        <section id="hotelAdmin" class="adminTab">
+            <h3>Szálloda CRUD</h3>
+
+            <select id="hotelPick"></select>
+
+            <form id="hotelForm">
+                <label>ID
+                    <input name="az" required>
+                </label>
+
+                <label>Név
+                    <input name="nev" required>
+                </label>
+
+                <label>Besorolás
+                    <input name="besorolas" type="number" required>
+                </label>
+
+                <label>Város
+                    <select name="helysegAz" required></select>
+                </label>
+
+                <label>Tengerpart távolság
+                    <input name="tengerpartTav" type="number" required>
+                </label>
+
+                <label>Repülőtér távolság
+                    <input name="repterTav" type="number" required>
+                </label>
+
+                <label>Félpanzió
+                    <select name="felpanzio">
+                        <option value="0">Nem</option>
+                        <option value="1">Igen</option>
+                    </select>
+                </label>
+
+                <button type="submit">Mentés</button>
+                <button type="button" id="hotelDelete">Törlés</button>
+                <button type="reset">Új</button>
+            </form>
+
+            <div id="hotelAdminList"></div>
+        </section>
+
+        <section id="offerAdmin" class="adminTab">
+            <h3>Utazási ajánlat CRUD</h3>
+
+            <select id="offerPick"></select>
+
+            <form id="offerForm">
+                <label>ID
+                    <input name="id" type="number" readonly>
+                </label>
+
+                <label>Szálloda
+                    <select name="szallodaAz" required></select>
+                </label>
+
+                <label>Indulás
+                    <input name="indulas" type="date" required>
+                </label>
+
+                <label>Időtartam
+                    <input name="idotartam" type="number" required>
+                </label>
+
+                <label>Ár
+                    <input name="ar" type="number" required>
+                </label>
+
+                <button type="submit">Mentés</button>
+                <button type="button" id="offerDelete">Törlés</button>
+                <button type="reset">Új</button>
+            </form>
+
+            <div id="offerAdminList"></div>
+        </section>
+    </section>
+
+</main>
+
+<div id="status"></div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
