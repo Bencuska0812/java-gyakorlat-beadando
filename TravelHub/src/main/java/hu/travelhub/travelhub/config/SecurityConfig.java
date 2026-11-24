@@ -2,6 +2,7 @@ package hu.travelhub.travelhub.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,6 +32,17 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout").permitAll()
+                        .requestMatchers("/api/auth/me").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/contact/messages").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/api/cities/**", "/api/hotels/**", "/api/offers/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/cities/**", "/api/hotels/**", "/api/offers/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/cities/**", "/api/hotels/**", "/api/offers/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/cities/**", "/api/hotels/**", "/api/offers/**").hasRole("ADMIN")
+
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form.disable())
