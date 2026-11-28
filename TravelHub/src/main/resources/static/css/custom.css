@@ -1,0 +1,85 @@
+/* TravelHub – saját kiegészítések a Traveland sablonhoz (a style.css UTÁN töltődik be) */
+:root { --brand: #EEC41E; --ink: #38424D; --muted: #747E88; --line: #DBDBDB; }
+
+/* ---------- szekciók ---------- */
+.services_area, .team_area, .contact_area { padding-bottom: 60px; }
+.services_area .container, .team_area .container, .contact_area .container { max-width: 1140px; }
+
+/* ---------- szűrősáv ---------- */
+.filter_bar { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: flex-end; margin: 0 0 35px; }
+.filter_bar label, .adminTab label { display: flex; flex-direction: column; gap: 6px; margin: 0; font-weight: 500; color: var(--ink); text-align: left; }
+
+/* ---------- beviteli mezők ---------- */
+.filter_bar select, .filter_bar input,
+.adminTab select, .adminTab input {
+  height: 50px; min-width: 190px; padding: 0 15px; background: #fff; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 5px; font-size: 16px;
+}
+.filter_bar select:focus, .filter_bar input:focus, .adminTab select:focus, .adminTab input:focus { outline: 0; border-color: var(--brand); }
+.adminTab > select { margin-bottom: 20px; min-width: 280px; }
+
+/* ---------- gombok ---------- */
+.filter_bar .main-btn, .section_title > .main-btn, .adminTab .main-btn, #admin nav .main-btn { margin: 4px; padding: 0 28px; }
+.adminTab form .main-btn { margin: 0 8px 0 0; }
+#admin nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+/* ---------- dinamikus listák: kártyás rács ---------- */
+#citiesList, #hotelsList, #offersList, #homeResults, #messagesList, #statsData {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px;
+  width: 100%; margin-top: 10px; text-align: left; color: var(--ink);
+}
+#citiesList > *, #hotelsList > *, #offersList > *, #homeResults > *, #messagesList > *, #statsData > * {
+  background: #fff; border-radius: 5px; padding: 24px 26px;
+  box-shadow: 0 5px 30px rgba(56, 66, 77, .10); transition: all .3s ease-out;
+}
+#citiesList > *:hover, #hotelsList > *:hover, #offersList > *:hover, #homeResults > *:hover {
+  transform: translateY(-4px); box-shadow: 0 10px 40px rgba(56, 66, 77, .16);
+}
+
+/* ---------- táblázatok (ha az app.js táblát generál) ---------- */
+#citiesList > table, #hotelsList > table, #offersList > table, #homeResults > table,
+#messagesList > table, #statsData > table {
+  grid-column: 1 / -1; width: 100%; border-collapse: collapse; overflow-x: auto; display: block;
+}
+table th { background: var(--ink); color: #fff; padding: 12px 14px; font-weight: 500; text-align: left; }
+table td { padding: 11px 14px; border-bottom: 1px solid var(--line); }
+table tr:hover td { background: #fffbea; }
+
+/* ---------- admin űrlapok ---------- */
+.adminTab { display: none; margin-top: 20px; }
+.adminTab.active { display: block; }
+#cityAdminList, #hotelAdminList, #offerAdminList { white-space: pre-line; padding: 20px 24px; background: #fff; border-radius: 5px; box-shadow: 0 5px 30px rgba(56, 66, 77, .10); color: var(--ink); }
+.item h3 { margin: 0 0 8px; font-size: 20px; font-weight: 600; color: var(--ink); }
+.item p { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+.adminTab h4 { margin-bottom: 20px; color: var(--ink); }
+.adminTab form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end; margin-bottom: 30px; }
+.adminTab form input, .adminTab form select { width: 100%; min-width: 0; }
+.adminTab form .main-btn { align-self: end; }
+
+/* ---------- profil, státusz ---------- */
+#profileData { max-width: 640px; margin: 0 auto 20px; padding: 24px; text-align: left; background: #fff; border-radius: 5px; box-shadow: 0 5px 30px rgba(56, 66, 77, .10); white-space: pre-wrap; }
+#status { position: fixed; right: 20px; bottom: 20px; z-index: 999; max-width: 340px; }
+#status:empty { display: none; }
+#status:not(:empty) { padding: 12px 18px; border-radius: 5px; background: var(--ink); color: #fff; box-shadow: 0 5px 20px rgba(0, 0, 0, .2); }
+
+@media (max-width: 575px) {
+  .filter_bar select, .filter_bar input { min-width: 100%; }
+  .filter_bar label { width: 100%; }
+}
+
+/* ---------- "Továbbiak betöltése" ---------- */
+.load_more { text-align: center; margin-top: 30px; }
+.load_more_info { margin: 0 0 12px; color: var(--muted); }
+
+/* ---------- Bejelentkezés / regisztráció ---------- */
+#login .contact_form, #register .contact_form {
+  max-width: 480px; margin: 0 auto; padding: 20px 40px 45px;
+  background: #fff; border-radius: 8px; box-shadow: 0 5px 30px rgba(56, 66, 77, .10);
+}
+#loginForm .single_form, #registerForm .single_form { margin-top: 22px; }
+#loginForm .single_form:last-child, #registerForm .single_form:last-child { margin-top: 34px; }
+#loginForm .main-btn, #registerForm .main-btn { width: 100%; margin: 0; }
+
+@media (max-width: 575px) {
+  #login .contact_form, #register .contact_form { padding: 10px 22px 35px; }
+}

@@ -1,175 +1,336 @@
-<!DOCTYPE html>
-<html lang="hu">
+<!doctype html>
+<html class="no-js" lang="hu">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>TravelHub</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/nice-select.css">
+    <link rel="stylesheet" href="css/LineIcons.2.0.css">
+    <link rel="stylesheet" href="css/bootstrap.4.5.2.min.css">
+    <link rel="stylesheet" href="css/default.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom.css">
 </head>
+
 <body>
 
-<header>
-    <h1>TravelHub</h1>
-    <nav id="nav">
-        <button data-page="home">Főoldal</button>
-        <button data-page="cities">Városok</button>
-        <button data-page="hotels">Szállodák</button>
-        <button data-page="offers">Utazások</button>
-        <button data-page="contact">Kapcsolat</button>
-        <button data-page="statistics">Statisztikák</button>
-        <button data-page="messages" class="admin">Üzenetek</button>
-        <button data-page="profile" class="auth">Profil</button>
-        <button data-page="admin" class="admin">Admin</button>
-        <button data-page="login" class="guest">Login</button>
-        <button data-page="register" class="guest">Regisztráció</button>
-        <button id="logout" class="auth">Kilépés</button>
-    </nav>
-</header>
+<!--====== PRELOADER ======-->
+<div class="preloader">
+    <div class="loader">
+        <div class="ytp-spinner">
+            <div class="ytp-spinner-container">
+                <div class="ytp-spinner-rotator">
+                    <div class="ytp-spinner-left"><div class="ytp-spinner-circle"></div></div>
+                    <div class="ytp-spinner-right"><div class="ytp-spinner-circle"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<main>
+<!--====== HEADER ======-->
+<section class="header_area">
+    <div class="header_navbar">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <nav class="navbar navbar-expand-lg">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="toggler-icon"></span>
+                            <span class="toggler-icon"></span>
+                            <span class="toggler-icon"></span>
+                        </button>
 
-    <section id="home" class="page">
-        <h2>Utazáskeresés</h2>
+                        <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+                            <ul id="nav" class="navbar-nav ml-auto">
+                                <li class="nav-item active"><a class="page-scroll" href="#home">Főoldal</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#searchOffers">Utazáskeresés</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#cities">Városok</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#hotels">Szállodák</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#offers">Utazások</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#contact">Kapcsolat</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#statistics">Statisztikák</a></li>
+                                <li class="nav-item admin"><a class="page-scroll" href="#messages">Üzenetek</a></li>
+                                <li class="nav-item auth"><a class="page-scroll" href="#profile">Profil</a></li>
+                                <li class="nav-item admin"><a class="page-scroll" href="#admin">Admin</a></li>
+                                <li class="nav-item guest"><a class="page-scroll" href="#login">Bejelentkezés</a></li>
+                                <li class="nav-item guest"><a class="page-scroll" href="#register">Regisztráció</a></li>
+                                <li class="nav-item auth"><a href="#" id="logout">Kilépés</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <label>Város
-            <select id="homeCity"></select>
-        </label>
+    <div id="home" class="header_slider">
+        <div class="single_slider bg_cover d-flex align-items-center" style="background-image: url(images/hero-area.jpg)">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-8">
+                        <div class="slider_content">
+                            <h2 class="slider_title wow fadeInLeftBig" data-wow-duration="1.3s" data-wow-delay="0.2s">Fedezd fel a világot a<span> TravelHubbal</span></h2>
+                            <p class="wow fadeInLeftBig" data-wow-duration="1.3s" data-wow-delay="0.5s">Válogass úti célok, szállások és ajánlatok között.</p>
+                            <a href="#searchOffers" class="main-btn wow fadeInLeftBig" data-wow-duration="1.3s" data-wow-delay="0.8s">Utazáskeresés</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-        <label>Maximális ár
-            <input id="homeMax" type="number">
-        </label>
+<!--====== UTAZÁSKERESÉS (régi: #home szekció) ======-->
+<section id="searchOffers" class="team_area pt-120 pb-130">
+    <div class="container">
+        <div class="section_title text-center pb-25">
+            <h3 class="title">Utazáskeresés</h3>
 
-        <button id="homeSearch">Keresés</button>
+            <div class="filter_bar">
+                <label>Város
+                    <select id="homeCity"></select>
+                </label>
 
-        <div id="homeResults"></div>
-    </section>
+                <label>Maximális ár
+                    <input id="homeMax" type="number">
+                </label>
 
-    <section id="cities" class="page">
-        <h2>Városok</h2>
-        <div id="citiesList"></div>
-    </section>
+                <button class="main-btn" id="homeSearch">Keresés</button>
+            </div>
 
-    <section id="hotels" class="page">
-        <h2>Szállodák</h2>
+            <div id="homeResults"></div>
+        </div>
+    </div>
+</section>
 
-        <label>Város
-            <select id="hotelCityFilter"></select>
-        </label>
+<!--====== VÁROSOK ======-->
+<section id="cities" class="services_area pt-120">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="section_title text-center pb-25">
+                    <h3 class="title">Városok</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row"><div class="col-12"><div id="citiesList"></div></div></div>
+    </div>
+</section>
 
-        <div id="hotelsList"></div>
-    </section>
+<!--====== SZÁLLODÁK ======-->
+<section id="hotels" class="services_area pt-120">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="section_title text-center pb-25">
+                    <h3 class="title">Szállodák</h3>
+                </div>
+            </div>
+        </div>
+        <div class="filter_bar">
+            <label>Város
+                <select id="hotelCityFilter"></select>
+            </label>
+        </div>
+        <div class="row"><div class="col-12"><div id="hotelsList"></div></div></div>
+    </div>
+</section>
 
-    <section id="offers" class="page">
-        <h2>Utazási ajánlatok</h2>
-
-        <label>Város
-            <select id="offerCity"></select>
-        </label>
-
-        <label>Maximális ár
-            <input id="offerMax" type="number">
-        </label>
-
-        <button id="offerSearch">Szűrés</button>
-
-        <div id="offersList"></div>
-    </section>
-
-    <section id="login" class="page">
-        <h2>Bejelentkezés</h2>
-
-        <form id="loginForm">
-            <label>Felhasználónév
-                <input name="username" required>
+<!--====== UTAZÁSI AJÁNLATOK ======-->
+<section id="offers" class="services_area pt-120">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="section_title text-center pb-25">
+                    <h3 class="title">Utazási ajánlatok</h3>
+                </div>
+            </div>
+        </div>
+        <div class="filter_bar">
+            <label>Város
+                <select id="offerCity"></select>
             </label>
 
-            <label>Jelszó
-                <input name="password" type="password" required>
+            <label>Maximális ár
+                <input id="offerMax" type="number">
             </label>
 
-            <button type="submit">Belépés</button>
-        </form>
-    </section>
+            <button class="main-btn" id="offerSearch">Szűrés</button>
+        </div>
+        <div class="row"><div class="col-12"><div id="offersList"></div></div></div>
+    </div>
+</section>
 
-    <section id="register" class="page">
-        <h2>Regisztráció</h2>
+<!--====== KAPCSOLAT ======-->
+<section id="contact" class="contact_area pt-120 pb-130">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="section_title text-center pb-25">
+                    <h3 class="title">Kapcsolat</h3>
+                </div>
+            </div>
+        </div>
+        <div class="contact_form">
+            <form id="contactForm">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single_form">
+                            <input name="name" placeholder="Név" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="single_form">
+                            <input name="email" type="email" placeholder="Email" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="single_form">
+                            <input name="subject" placeholder="Tárgy" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="single_form">
+                            <textarea name="message" rows="5" placeholder="Üzenet" required></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="single_form">
+                            <button type="submit" class="main-btn">Üzenet küldése</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 
-        <form id="registerForm">
-            <label>Felhasználónév
-                <input name="username" required>
-            </label>
+<!--====== STATISZTIKÁK ======-->
+<section id="statistics" class="team_area pt-120 pb-130">
+    <div class="container">
+        <div class="section_title text-center pb-25">
+            <h3 class="title">Statisztikák</h3>
 
-            <label>Email
-                <input name="email" type="email" required>
-            </label>
+            <button class="main-btn" id="statsRefresh">Betöltés</button>
 
-            <label>Jelszó
-                <input name="password" type="password" required>
-            </label>
+            <div id="statsData"></div>
+        </div>
+    </div>
+</section>
 
-            <button type="submit">Regisztráció</button>
-        </form>
-    </section>
+<!--====== ÜZENETEK (admin) ======-->
+<section id="messages" class="services_area pt-120 admin">
+    <div class="container">
+        <div class="section_title text-center pb-25">
+            <h3 class="title">Üzenetek</h3>
 
-    <section id="profile" class="page">
-        <h2>Profil</h2>
+            <button class="main-btn" id="messagesRefresh">Betöltés</button>
 
-        <pre id="profileData"></pre>
+            <div id="messagesList"></div>
+        </div>
+    </div>
+</section>
 
-        <button id="profileRefresh">Frissítés</button>
-    </section>
+<!--====== PROFIL (bejelentkezve) ======-->
+<section id="profile" class="team_area pt-120 pb-130 auth">
+    <div class="container">
+        <div class="section_title text-center pb-25">
+            <h3 class="title">Profil</h3>
 
-    <section id="contact" class="page">
-        <h2>Kapcsolat</h2>
+            <pre id="profileData"></pre>
 
-        <form id="contactForm">
-            <label>Név
-                <input name="name" required>
-            </label>
+            <button class="main-btn" id="profileRefresh">Frissítés</button>
+        </div>
+    </div>
+</section>
 
-            <label>Email
-                <input name="email" type="email" required>
-            </label>
+<!--====== BEJELENTKEZÉS (vendég) ======-->
+<section id="login" class="contact_area pt-120 pb-130 guest">
+    <div class="container">
+        <div class="section_title text-center pb-25">
+            <h3 class="title">Bejelentkezés</h3>
+        </div>
+        <div class="contact_form">
+            <form id="loginForm">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div class="single_form">
+                            <input name="username" placeholder="Felhasználónév" required>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="single_form">
+                            <input name="password" type="password" placeholder="Jelszó" required>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center">
+                        <div class="single_form">
+                            <button type="submit" class="main-btn">Belépés</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 
-            <label>Tárgy
-                <input name="subject" required>
-            </label>
+<!--====== REGISZTRÁCIÓ (vendég) ======-->
+<section id="register" class="contact_area pt-120 pb-130 guest">
+    <div class="container">
+        <div class="section_title text-center pb-25">
+            <h3 class="title">Regisztráció</h3>
+        </div>
+        <div class="contact_form">
+            <form id="registerForm">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div class="single_form">
+                            <input name="username" placeholder="Felhasználónév" required>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="single_form">
+                            <input name="email" type="email" placeholder="Email" required>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="single_form">
+                            <input name="password" type="password" placeholder="Jelszó" required>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center">
+                        <div class="single_form">
+                            <button type="submit" class="main-btn">Regisztráció</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 
-            <label>Üzenet
-                <textarea name="message" rows="5" required></textarea>
-            </label>
+<!--====== ADMIN ======-->
+<section id="admin" class="services_area pt-120 pb-130 admin">
+    <div class="container">
+        <div class="section_title text-center pb-25">
+            <h3 class="title">Adminisztráció</h3>
+        </div>
 
-            <button type="submit">Üzenet küldése</button>
-        </form>
-    </section>
-
-    <section id="messages" class="page">
-        <h2>Üzenetek</h2>
-
-        <button id="messagesRefresh">Betöltés</button>
-
-        <div id="messagesList"></div>
-    </section>
-
-    <section id="statistics" class="page">
-        <h2>Statisztikák</h2>
-
-        <button id="statsRefresh">Betöltés</button>
-
-        <div id="statsData"></div>
-    </section>
-
-    <section id="admin" class="page">
-        <h2>Adminisztráció</h2>
-
-        <nav>
-            <button data-admin="cityAdmin">Városok</button>
-            <button data-admin="hotelAdmin">Szállodák</button>
-            <button data-admin="offerAdmin">Utazások</button>
+        <nav class="text-center pb-25">
+            <button class="main-btn" data-admin="cityAdmin">Városok</button>
+            <button class="main-btn" data-admin="hotelAdmin">Szállodák</button>
+            <button class="main-btn" data-admin="offerAdmin">Utazások</button>
         </nav>
 
-        <section id="cityAdmin" class="adminTab">
-            <h3>Város CRUD</h3>
+        <!-- Város CRUD -->
+        <section id="cityAdmin" class="adminTab active">
+            <h4>Város CRUD</h4>
 
             <select id="cityPick"></select>
 
@@ -186,16 +347,17 @@
                     <input name="orszag" required>
                 </label>
 
-                <button type="submit">Mentés</button>
-                <button type="button" id="cityDelete">Törlés</button>
-                <button type="reset">Új</button>
+                <button class="main-btn" type="submit">Mentés</button>
+                <button class="main-btn main-btn-2" type="button" id="cityDelete">Törlés</button>
+                <button class="main-btn main-btn-2" type="reset">Új</button>
             </form>
 
             <div id="cityAdminList"></div>
         </section>
 
+        <!-- Szálloda CRUD -->
         <section id="hotelAdmin" class="adminTab">
-            <h3>Szálloda CRUD</h3>
+            <h4>Szálloda CRUD</h4>
 
             <select id="hotelPick"></select>
 
@@ -231,16 +393,17 @@
                     </select>
                 </label>
 
-                <button type="submit">Mentés</button>
-                <button type="button" id="hotelDelete">Törlés</button>
-                <button type="reset">Új</button>
+                <button class="main-btn" type="submit">Mentés</button>
+                <button class="main-btn main-btn-2" type="button" id="hotelDelete">Törlés</button>
+                <button class="main-btn main-btn-2" type="reset">Új</button>
             </form>
 
             <div id="hotelAdminList"></div>
         </section>
 
+        <!-- Utazási ajánlat CRUD -->
         <section id="offerAdmin" class="adminTab">
-            <h3>Utazási ajánlat CRUD</h3>
+            <h4>Utazási ajánlat CRUD</h4>
 
             <select id="offerPick"></select>
 
@@ -265,20 +428,73 @@
                     <input name="ar" type="number" required>
                 </label>
 
-                <button type="submit">Mentés</button>
-                <button type="button" id="offerDelete">Törlés</button>
-                <button type="reset">Új</button>
+                <button class="main-btn" type="submit">Mentés</button>
+                <button class="main-btn main-btn-2" type="button" id="offerDelete">Törlés</button>
+                <button class="main-btn main-btn-2" type="reset">Új</button>
             </form>
 
             <div id="offerAdminList"></div>
         </section>
-    </section>
-
-</main>
+    </div>
+</section>
 
 <div id="status"></div>
 
+<!--====== FOOTER ======-->
+<section id="footer" class="footer_area">
+    <div class="footer_widget pt-80 pb-130">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer_about mt-50">
+                        <a href="#"><img src="images/logo.svg" alt="logo"></a>
+                        <p>TravelHub: úti célok, szállodák és utazási ajánlatok egy helyen.</p>
+                        <ul class="social">
+                            <li><a class="social_1" href="javascript:void(0)"><i class="lni lni-facebook-original"></i></a></li>
+                            <li><a class="social_2" href="javascript:void(0)"><i class="lni lni-twitter-original"></i></a></li>
+                            <li><a class="social_3" href="javascript:void(0)"><i class="lni lni-instagram-original"></i></a></li>
+                            <li><a class="social_4" href="javascript:void(0)"><i class="lni lni-linkedin-original"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="footer_link_wrapper d-flex flex-wrap">
+                        <div class="footer_link mt-45">
+                            <h4 class="footer_title">Gyorslinkek</h4>
+                            <ul class="link">
+                                <li><a href="#home">Főoldal</a></li>
+                                <li><a href="#cities">Városok</a></li>
+                                <li><a href="#hotels">Szállodák</a></li>
+                                <li><a href="#offers">Utazások</a></li>
+                                <li><a href="#contact">Kapcsolat</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="text-center mt-90">Designed and Developed by <a href="https://uideck.com/" target="_blank">UIdeck</a> <br> Distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a></p>
+    </div>
+</section>
+
+<a href="#" class="back-to-top"><i class="lni lni-chevron-up"></i></a>
+
+<!--====== SCRIPTS ======-->
+<script src="js/vendor/jquery-1.12.4.min.js"></script>
+<script src="js/vendor/modernizr-3.7.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.4.5.2.min.js"></script>
+<script src="js/jquery.easing.min.js"></script>
+<script src="js/scrolling-nav.js"></script>
+<script src="js/waypoints.min.js"></script>
+<script src="js/jquery.counterup.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/wow.min.js"></script>
+<script src="js/main.js"></script>
+
+<!--====== Adatok (backend hívások) ======-->
 <script src="js/app.js"></script>
 
 </body>
+
 </html>

@@ -5,7 +5,7 @@ let cities = [];
 let hotels = [];
 let offers = [];
 
-const $ = id => document.getElementById(id);
+const byId = id => document.getElementById(id);
 
 const formData = form => Object.fromEntries(new FormData(form));
 
@@ -39,10 +39,10 @@ async function api(path, method = "GET", body = null) {
 }
 
 function notify(message) {
-    $("status").textContent = message;
+    byId("status").textContent = message;
 
     setTimeout(() => {
-        $("status").textContent = "";
+        byId("status").textContent = "";
     }, 4000);
 }
 
@@ -78,17 +78,22 @@ function showPage(pageId) {
     }
 }
 
+function goTo(pageId) {
+    showPage(pageId);
+    byId(pageId)?.scrollIntoView({ behavior: "smooth" });
+}
+
 function updateNavigation() {
     document.querySelectorAll(".guest").forEach(element => {
-        element.style.display = user ? "none" : "inline-block";
+        element.style.display = user ? "none" : "";
     });
 
     document.querySelectorAll(".auth").forEach(element => {
-        element.style.display = user ? "inline-block" : "none";
+        element.style.display = user ? "" : "none";
     });
 
     document.querySelectorAll(".admin").forEach(element => {
-        element.style.display = user?.role === "ADMIN" ? "inline-block" : "none";
+        element.style.display = user?.role === "ADMIN" ? "" : "none";
     });
 }
 
@@ -123,6 +128,58 @@ function getOfferHotelName(offer) {
     return getHotel(offer.szallodaAz)?.nev || offer.szallodaAz;
 }
 
+const PAGE_SIZE = 12;
+
+function clearPaged(containerId) {
+    byId(containerId).innerHTML = "";
+    byId(containerId + "More")?.remove();
+}
+
+function renderPaged(containerId, items, buildCard, pageSize = PAGE_SIZE) {
+    const container = byId(containerId);
+    container.innerHTML = "";
+
+    let more = byId(containerId + "More");
+
+    if (!more) {
+        more = document.createElement("div");
+        more.id = containerId + "More";
+        more.className = "load_more";
+        container.insertAdjacentElement("afterend", more);
+    }
+
+    more.innerHTML = "";
+
+    const info = document.createElement("p");
+    info.className = "load_more_info";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "main-btn";
+    button.textContent = "Továbbiak betöltése";
+
+    let shown = 0;
+
+    function showNext() {
+        items.slice(shown, shown + pageSize).forEach(item => {
+            container.appendChild(buildCard(item));
+        });
+
+        shown = Math.min(shown + pageSize, items.length);
+
+        info.textContent = items.length
+            ? shown + " / " + items.length + " találat"
+            : "Nincs találat.";
+
+        button.style.display = shown < items.length ? "" : "none";
+    }
+
+    button.addEventListener("click", showNext);
+    more.append(info, button);
+
+    showNext();
+}
+
 function createCard(title, text) {
     const container = document.createElement("article");
     container.className = "item";
@@ -140,40 +197,34 @@ function createCard(title, text) {
 }
 
 function renderCities() {
-    $("citiesList").innerHTML = "";
-
-    cities.forEach(city => {
-        $("citiesList").appendChild(
-            createCard(city.nev, city.orszag + " | ID: " + city.az)
-        );
-    });
+    renderPaged("citiesList", cities, city =>
+        createCard(city.nev, city.orszag + " | ID: " + city.az)
+    );
 }
 
 function renderHotels() {
-    $("hotelsList").innerHTML = "";
+    const selectedCity = byId("hotelCityFilter").value;
 
-    const selectedCity = $("hotelCityFilter").value;
+    const filtered = hotels.filter(
+        hotel => !selectedCity || String(hotel.helysegAz) === selectedCity
+    );
 
-    hotels
-        .filter(hotel => !selectedCity || String(hotel.helysegAz) === selectedCity)
-        .forEach(hotel => {
-            const cityName = getCity(hotel.helysegAz)?.nev || "";
+    renderPaged("hotelsList", filtered, hotel => {
+        const cityName = getCity(hotel.helysegAz)?.nev || "";
 
-            const text =
-                cityName +
-                " | " +
-                hotel.besorolas +
-                " csillag | Tengerpart: " +
-                hotel.tengerpartTav +
-                " | Repülőtér: " +
-                hotel.repterTav +
-                " | Félpanzió: " +
-                (hotel.felpanzio ? "igen" : "nem");
+        const text =
+            cityName +
+            " | " +
+            hotel.besorolas +
+            " csillag | Tengerpart: " +
+            hotel.tengerpartTav +
+            " | Repülőtér: " +
+            hotel.repterTav +
+            " | Félpanzió: " +
+            (hotel.felpanzio ? "igen" : "nem");
 
-            $("hotelsList").appendChild(
-                createCard(hotel.nev, text)
-            );
-        });
+        return createCard(hotel.nev, text);
+    });
 }
 
 function matchingOffers(cityId, maxPrice) {
@@ -193,12 +244,12 @@ function matchingOffers(cityId, maxPrice) {
 }
 
 function renderOffers() {
-    $("offersList").innerHTML = "";
+    const filtered = matchingOffers(
+        byId("offerCity").value,
+        byId("offerMax").value
+    );
 
-    matchingOffers(
-        $("offerCity").value,
-        $("offerMax").value
-    ).forEach(offer => {
+    renderPaged("offersList", filtered, offer => {
         const selectedHotel = getHotel(offer.szallodaAz);
         const cityName = getCity(selectedHotel?.helysegAz)?.nev || "";
 
@@ -212,38 +263,32 @@ function renderOffers() {
             Number(offer.ar).toLocaleString("hu-HU") +
             " Ft";
 
-        $("offersList").appendChild(
-            createCard(getOfferHotelName(offer), text)
-        );
+        return createCard(getOfferHotelName(offer), text);
     });
 }
 
 function renderHome() {
-    $("homeResults").innerHTML = "";
+    const filtered = matchingOffers(
+        byId("homeCity").value,
+        byId("homeMax").value
+    );
 
-    matchingOffers(
-        $("homeCity").value,
-        $("homeMax").value
-    )
-        .slice(0, 30)
-        .forEach(offer => {
-            const selectedHotel = getHotel(offer.szallodaAz);
-            const cityName = getCity(selectedHotel?.helysegAz)?.nev || "";
+    renderPaged("homeResults", filtered, offer => {
+        const selectedHotel = getHotel(offer.szallodaAz);
+        const cityName = getCity(selectedHotel?.helysegAz)?.nev || "";
 
-            const text =
-                cityName +
-                " | " +
-                offer.indulas +
-                " | " +
-                offer.idotartam +
-                " nap | " +
-                Number(offer.ar).toLocaleString("hu-HU") +
-                " Ft";
+        const text =
+            cityName +
+            " | " +
+            offer.indulas +
+            " | " +
+            offer.idotartam +
+            " nap | " +
+            Number(offer.ar).toLocaleString("hu-HU") +
+            " Ft";
 
-            $("homeResults").appendChild(
-                createCard(getOfferHotelName(offer), text)
-            );
-        });
+        return createCard(getOfferHotelName(offer), text);
+    });
 }
 
 async function loadAll() {
@@ -259,21 +304,21 @@ async function loadAll() {
         offers = results[2];
 
         fillOptions(
-            $("homeCity"),
+            byId("homeCity"),
             cities,
             "az",
             city => city.nev + " - " + city.orszag
         );
 
         fillOptions(
-            $("hotelCityFilter"),
+            byId("hotelCityFilter"),
             cities,
             "az",
             city => city.nev
         );
 
         fillOptions(
-            $("offerCity"),
+            byId("offerCity"),
             cities,
             "az",
             city => city.nev
@@ -291,13 +336,13 @@ async function loadAll() {
 
 async function login() {
     try {
-        await api("/auth/login", "POST", formData($("loginForm")));
+        await api("/auth/login", "POST", formData(byId("loginForm")));
 
         await loadProfile();
 
         notify("Sikeres bejelentkezés");
 
-        showPage("home");
+        goTo("home");
     } catch (error) {
         notify("Bejelentkezési hiba: " + error.message);
     }
@@ -305,11 +350,11 @@ async function login() {
 
 async function register() {
     try {
-        await api("/auth/register", "POST", formData($("registerForm")));
+        await api("/auth/register", "POST", formData(byId("registerForm")));
 
         notify("Sikeres regisztráció. Most jelentkezz be.");
 
-        showPage("login");
+        goTo("login");
     } catch (error) {
         notify("Regisztrációs hiba: " + error.message);
     }
@@ -323,7 +368,7 @@ async function logout() {
 
         updateNavigation();
 
-        showPage("home");
+        goTo("home");
 
         notify("Sikeresen kijelentkeztél.");
     } catch (error) {
@@ -335,11 +380,11 @@ async function loadProfile() {
     try {
         user = await api("/auth/me");
 
-        $("profileData").textContent = JSON.stringify(user, null, 2);
+        byId("profileData").textContent = JSON.stringify(user, null, 2);
     } catch {
         user = null;
 
-        $("profileData").textContent = "Nincs bejelentkezve.";
+        byId("profileData").textContent = "Nincs bejelentkezve.";
     }
 
     updateNavigation();
@@ -347,9 +392,9 @@ async function loadProfile() {
 
 async function sendContact() {
     try {
-        await api("/contact", "POST", formData($("contactForm")));
+        await api("/contact", "POST", formData(byId("contactForm")));
 
-        $("contactForm").reset();
+        byId("contactForm").reset();
 
         notify("Üzenet sikeresen elküldve.");
     } catch (error) {
@@ -359,7 +404,7 @@ async function sendContact() {
 
 async function loadMessages() {
     if (user?.role !== "ADMIN") {
-        $("messagesList").innerHTML = "";
+        clearPaged("messagesList");
         notify("Az üzenetek megtekintéséhez admin jogosultság szükséges.");
         showPage("home");
         return;
@@ -368,9 +413,9 @@ async function loadMessages() {
     try {
         const messages = await api("/contact/messages");
 
-        $("messagesList").innerHTML = "";
+        clearPaged("messagesList");
 
-        messages.forEach(message => {
+        renderPaged("messagesList", messages, message => {
             const text =
                 message.name +
                 " | " +
@@ -380,12 +425,10 @@ async function loadMessages() {
                 " | " +
                 message.message;
 
-            $("messagesList").appendChild(
-                createCard(message.subject, text)
-            );
+            return createCard(message.subject, text);
         });
     } catch (error) {
-        $("messagesList").innerHTML = "";
+        clearPaged("messagesList");
 
         notify("Üzenetek betöltése sikertelen: " + error.message);
     }
@@ -400,7 +443,7 @@ async function loadStatistics() {
             api("/statistics/average-price-by-city")
         ]);
 
-        $("statsData").innerHTML = "";
+        byId("statsData").innerHTML = "";
 
         const titles = [
             "Összesítés",
@@ -410,7 +453,7 @@ async function loadStatistics() {
         ];
 
         results.forEach((result, index) => {
-            $("statsData").appendChild(
+            byId("statsData").appendChild(
                 createCard(titles[index], JSON.stringify(result))
             );
         });
@@ -427,7 +470,7 @@ function refreshAdmin() {
     }
 
     fillOptions(
-        $("cityPick"),
+        byId("cityPick"),
         cities,
         "az",
         city => city.az + " - " + city.nev,
@@ -435,7 +478,7 @@ function refreshAdmin() {
     );
 
     fillOptions(
-        $("hotelPick"),
+        byId("hotelPick"),
         hotels,
         "az",
         hotel => hotel.az + " - " + hotel.nev,
@@ -443,7 +486,7 @@ function refreshAdmin() {
     );
 
     fillOptions(
-        $("offerPick"),
+        byId("offerPick"),
         offers,
         "id",
         offer => offer.id + " - " + getOfferHotelName(offer),
@@ -451,7 +494,7 @@ function refreshAdmin() {
     );
 
     fillOptions(
-        $("hotelForm").elements.helysegAz,
+        byId("hotelForm").elements.helysegAz,
         cities,
         "az",
         city => city.nev,
@@ -459,22 +502,22 @@ function refreshAdmin() {
     );
 
     fillOptions(
-        $("offerForm").elements.szallodaAz,
+        byId("offerForm").elements.szallodaAz,
         hotels,
         "az",
         hotel => hotel.nev,
         "Szálloda kiválasztása"
     );
 
-    $("cityAdminList").textContent = cities
+    byId("cityAdminList").textContent = cities
         .map(city => city.az + " | " + city.nev + " | " + city.orszag)
         .join("\n");
 
-    $("hotelAdminList").textContent = hotels
+    byId("hotelAdminList").textContent = hotels
         .map(hotel => hotel.az + " | " + hotel.nev)
         .join("\n");
 
-    $("offerAdminList").textContent = offers
+    byId("offerAdminList").textContent = offers
         .map(offer =>
             offer.id +
             " | " +
@@ -534,40 +577,43 @@ async function deleteEntity(path, id) {
     }
 }
 
-$("nav").addEventListener("click", event => {
-    const button = event.target.closest("[data-page]");
+byId("nav").addEventListener("click", event => {
+    const link = event.target.closest("a.page-scroll");
 
-    if (button) {
-        showPage(button.dataset.page);
+    if (link && link.hash) {
+        showPage(link.hash.slice(1));
     }
 });
 
-$("logout").addEventListener("click", logout);
+byId("logout").addEventListener("click", event => {
+    event.preventDefault();
+    logout();
+});
 
-$("loginForm").addEventListener("submit", event => {
+byId("loginForm").addEventListener("submit", event => {
     event.preventDefault();
     login();
 });
 
-$("registerForm").addEventListener("submit", event => {
+byId("registerForm").addEventListener("submit", event => {
     event.preventDefault();
     register();
 });
 
-$("contactForm").addEventListener("submit", event => {
+byId("contactForm").addEventListener("submit", event => {
     event.preventDefault();
     sendContact();
 });
 
-$("profileRefresh").addEventListener("click", loadProfile);
-$("messagesRefresh").addEventListener("click", loadMessages);
-$("statsRefresh").addEventListener("click", loadStatistics);
-$("homeSearch").addEventListener("click", renderHome);
-$("offerSearch").addEventListener("click", renderOffers);
+byId("profileRefresh").addEventListener("click", loadProfile);
+byId("messagesRefresh").addEventListener("click", loadMessages);
+byId("statsRefresh").addEventListener("click", loadStatistics);
+byId("homeSearch").addEventListener("click", renderHome);
+byId("offerSearch").addEventListener("click", renderOffers);
 
-$("hotelCityFilter").addEventListener("change", renderHotels);
-$("homeCity").addEventListener("change", renderHome);
-$("offerCity").addEventListener("change", renderOffers);
+byId("hotelCityFilter").addEventListener("change", renderHotels);
+byId("homeCity").addEventListener("change", renderHome);
+byId("offerCity").addEventListener("change", renderOffers);
 
 document.querySelectorAll("[data-admin]").forEach(button => {
     button.addEventListener("click", () => {
@@ -575,47 +621,47 @@ document.querySelectorAll("[data-admin]").forEach(button => {
             section.classList.remove("active");
         });
 
-        $(button.dataset.admin).classList.add("active");
+        byId(button.dataset.admin).classList.add("active");
     });
 });
 
-$("cityPick").addEventListener("change", () => {
+byId("cityPick").addEventListener("change", () => {
     const city = cities.find(
-        item => String(item.az) === $("cityPick").value
+        item => String(item.az) === byId("cityPick").value
     );
 
     if (city) {
-        setForm($("cityForm"), city);
+        setForm(byId("cityForm"), city);
     } else {
-        $("cityForm").reset();
+        byId("cityForm").reset();
     }
 });
 
-$("hotelPick").addEventListener("change", () => {
+byId("hotelPick").addEventListener("change", () => {
     const hotel = hotels.find(
-        item => String(item.az) === $("hotelPick").value
+        item => String(item.az) === byId("hotelPick").value
     );
 
     if (hotel) {
-        setForm($("hotelForm"), hotel);
+        setForm(byId("hotelForm"), hotel);
     } else {
-        $("hotelForm").reset();
+        byId("hotelForm").reset();
     }
 });
 
-$("offerPick").addEventListener("change", () => {
+byId("offerPick").addEventListener("change", () => {
     const offer = offers.find(
-        item => String(item.id) === $("offerPick").value
+        item => String(item.id) === byId("offerPick").value
     );
 
     if (offer) {
-        setForm($("offerForm"), offer);
+        setForm(byId("offerForm"), offer);
     } else {
-        $("offerForm").reset();
+        byId("offerForm").reset();
     }
 });
 
-$("cityForm").addEventListener("submit", async event => {
+byId("cityForm").addEventListener("submit", async event => {
     event.preventDefault();
 
     const data = formData(event.target);
@@ -623,12 +669,12 @@ $("cityForm").addEventListener("submit", async event => {
 
     await saveEntity(
         "/cities",
-        $("cityPick").value,
+        byId("cityPick").value,
         data
     );
 });
 
-$("hotelForm").addEventListener("submit", async event => {
+byId("hotelForm").addEventListener("submit", async event => {
     event.preventDefault();
 
     const data = formData(event.target);
@@ -645,12 +691,12 @@ $("hotelForm").addEventListener("submit", async event => {
 
     await saveEntity(
         "/hotels",
-        $("hotelPick").value,
+        byId("hotelPick").value,
         data
     );
 });
 
-$("offerForm").addEventListener("submit", async event => {
+byId("offerForm").addEventListener("submit", async event => {
     event.preventDefault();
 
     const data = formData(event.target);
@@ -658,7 +704,7 @@ $("offerForm").addEventListener("submit", async event => {
     data.idotartam = Number(data.idotartam);
     data.ar = Number(data.ar);
 
-    const id = $("offerPick").value;
+    const id = byId("offerPick").value;
 
     if (id) {
         data.id = Number(id);
@@ -671,16 +717,16 @@ $("offerForm").addEventListener("submit", async event => {
     );
 });
 
-$("cityDelete").addEventListener("click", () => {
-    deleteEntity("/cities", $("cityPick").value);
+byId("cityDelete").addEventListener("click", () => {
+    deleteEntity("/cities", byId("cityPick").value);
 });
 
-$("hotelDelete").addEventListener("click", () => {
-    deleteEntity("/hotels", $("hotelPick").value);
+byId("hotelDelete").addEventListener("click", () => {
+    deleteEntity("/hotels", byId("hotelPick").value);
 });
 
-$("offerDelete").addEventListener("click", () => {
-    deleteEntity("/offers", $("offerPick").value);
+byId("offerDelete").addEventListener("click", () => {
+    deleteEntity("/offers", byId("offerPick").value);
 });
 
 loadProfile().then(loadAll);

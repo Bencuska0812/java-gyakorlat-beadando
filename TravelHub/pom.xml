@@ -8,10 +8,10 @@
         <version>4.2.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <packaging>war</packaging>
     <groupId>hu.travelhub</groupId>
     <artifactId>travelhub</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
     <name>TravelHub</name>
     <description>TravelHub</description>
     <url/>
