@@ -4,7 +4,7 @@
 
 📚 **Adatbázis:** 1-01-Utazás-3 táblás
 
-🎨 **Téma:** [TraveLand]([https://themewagon.com/themes/free-bootstrap-4-html-5-education-website-template-joson/](https://themewagon.com/themes/traveland/#))
+🎨 **Téma:** [TraveLand](https://themewagon.com/themes/traveland/)
 
 👥 **Készítették:**
 - Mata László Dominik ([matadominik](https://github.com/matadominik)) – B223VA
