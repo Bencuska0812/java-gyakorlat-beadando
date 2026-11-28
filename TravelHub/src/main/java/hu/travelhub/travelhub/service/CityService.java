@@ -28,6 +28,15 @@ public class CityService {
     }
 
     public City saveCity(City city) {
+        if (city.getAz() == null) {
+            int nextId = cityRepository.findAll().stream()
+                    .map(City::getAz)
+                    .filter(id -> id != null)
+                    .max(Integer::compareTo)
+                    .orElse(0) + 1;
+            city.setAz(nextId);
+        }
+
         return cityRepository.save(city);
     }
 

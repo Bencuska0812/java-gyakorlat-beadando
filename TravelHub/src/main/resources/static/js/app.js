@@ -350,6 +350,10 @@ async function loadAll() {
         renderOffers();
         renderHome();
         updateNavigation();
+
+        if (user?.role === "ADMIN") {
+            refreshAdmin();
+        }
     } catch (error) {
         notify("Adatok betöltése sikertelen: " + error.message);
         showListError("Az adatok nem tölthetők be: " + error.message);
@@ -791,7 +795,9 @@ byId("offerPick").addEventListener("change", () => loadPicked("offerPick", "offe
     .forEach(([formId, pickId, key]) => {
         byId(formId).addEventListener("reset", () => {
             byId(pickId).value = "";
-            byId(formId).elements[key].readOnly = key === "id";
+            if (byId(formId).elements[key]) {
+                byId(formId).elements[key].readOnly = key === "id";
+            }
         });
     });
 
@@ -799,7 +805,6 @@ byId("cityForm").addEventListener("submit", async event => {
     event.preventDefault();
 
     const data = formData(event.target);
-    data.az = Number(data.az);
 
     await saveEntity(
         "/cities",
@@ -843,12 +848,6 @@ byId("offerForm").addEventListener("submit", async event => {
     data.ar = Number(data.ar);
 
     const id = byId("offerPick").value;
-
-    if (id) {
-        data.id = Number(id);
-    } else {
-        delete data.id; // új ajánlatnál az üres id ne menjen el a szervernek
-    }
 
     await saveEntity(
         "/offers",

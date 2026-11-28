@@ -48,7 +48,7 @@ table tr:hover td { background: #fffbea; }
 /* ---------- admin űrlapok ---------- */
 .adminTab { display: none; margin-top: 20px; }
 .adminTab.active { display: block; }
-#cityAdminList, #hotelAdminList, #offerAdminList { white-space: pre-line; padding: 20px 24px; background: #fff; border-radius: 5px; box-shadow: 0 5px 30px rgba(56, 66, 77, .10); color: var(--ink); }
+#cityAdminList, #hotelAdminList, #offerAdminList { max-height: 320px; overflow-y: auto; white-space: pre-line; padding: 20px 24px; background: #fff; border-radius: 5px; box-shadow: 0 5px 30px rgba(56, 66, 77, .10); color: var(--ink); }
 .item h3 { margin: 0 0 8px; font-size: 20px; font-weight: 600; color: var(--ink); }
 .item p { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
 .adminTab h4 { margin-bottom: 20px; color: var(--ink); }

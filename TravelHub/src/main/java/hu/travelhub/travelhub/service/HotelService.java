@@ -4,6 +4,7 @@ import hu.travelhub.travelhub.entity.Hotel;
 import hu.travelhub.travelhub.repository.HotelRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -28,6 +29,17 @@ public class HotelService {
     }
 
     public Hotel saveHotel(Hotel hotel) {
+        if (hotel.getAz() == null || hotel.getAz().isBlank()) {
+            BigInteger nextId = hotelRepository.findAll().stream()
+                    .map(Hotel::getAz)
+                    .filter(id -> id != null && id.matches("\\d+"))
+                    .map(BigInteger::new)
+                    .max(BigInteger::compareTo)
+                    .orElse(BigInteger.ZERO)
+                    .add(BigInteger.ONE);
+            hotel.setAz(nextId.toString());
+        }
+
         return hotelRepository.save(hotel);
     }
 
