@@ -57,7 +57,6 @@
                                 <li class="nav-item"><a class="page-scroll" href="#contact">Kapcsolat</a></li>
                                 <li class="nav-item"><a class="page-scroll" href="#statistics">Statisztikák</a></li>
                                 <li class="nav-item admin"><a class="page-scroll" href="#messages">Üzenetek</a></li>
-                                <li class="nav-item auth"><a class="page-scroll" href="#profile">Profil</a></li>
                                 <li class="nav-item admin"><a class="page-scroll" href="#admin">Admin</a></li>
                                 <li class="nav-item guest"><a class="page-scroll" href="#login">Bejelentkezés</a></li>
                                 <li class="nav-item guest"><a class="page-scroll" href="#register">Regisztráció</a></li>
@@ -239,7 +238,7 @@
 </section>
 
 <!--====== PROFIL (bejelentkezve) ======-->
-<section id="profile" class="team_area pt-120 pb-130 auth">
+<section hidden="hidden" id="profile" class="team_area pt-120 pb-130 auth">
     <div class="container">
         <div class="section_title text-center pb-25">
             <h3 class="title">Profil</h3>
@@ -486,6 +485,9 @@
 <script src="js/jquery.nice-select.min.js"></script>
 <script src="js/wow.min.js"></script>
 <script src="js/main.js"></script>
+
+<!--====== Diagram ======-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!--====== Adatok (backend hívások) ======-->
 <script src="js/app.js"></script>

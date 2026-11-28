@@ -21,7 +21,13 @@ async function api(path, method = "GET", body = null) {
         options.body = JSON.stringify(body);
     }
 
-    const response = await fetch(API + path, options);
+    let response;
+
+    try {
+        response = await fetch(API + path, options);
+    } catch {
+        throw new Error("A szerver nem érhető el (" + method + " " + API + path + ")");
+    }
     const text = await response.text();
 
     let data = text;
@@ -32,7 +38,10 @@ async function api(path, method = "GET", body = null) {
     }
 
     if (!response.ok) {
-        throw new Error(data?.message || data?.error || "HTTP " + response.status);
+        throw new Error(
+            (data?.message || data?.error || "HTTP " + response.status) +
+            " (" + method + " " + API + path + ")"
+        );
     }
 
     return data;
@@ -178,6 +187,18 @@ function renderPaged(containerId, items, buildCard, pageSize = PAGE_SIZE) {
     more.append(info, button);
 
     showNext();
+}
+
+function showListError(message) {
+    ["citiesList", "hotelsList", "offersList", "homeResults"].forEach(containerId => {
+        clearPaged(containerId);
+
+        const error = document.createElement("p");
+        error.className = "list_error";
+        error.textContent = message;
+
+        byId(containerId).appendChild(error);
+    });
 }
 
 function createCard(title, text) {
@@ -331,6 +352,7 @@ async function loadAll() {
         updateNavigation();
     } catch (error) {
         notify("Adatok betöltése sikertelen: " + error.message);
+        showListError("Az adatok nem tölthetők be: " + error.message);
     }
 }
 
@@ -434,6 +456,9 @@ async function loadMessages() {
     }
 }
 
+
+let statisticsCharts = [];
+
 async function loadStatistics() {
     try {
         const results = await Promise.all([
@@ -443,31 +468,123 @@ async function loadStatistics() {
             api("/statistics/average-price-by-city")
         ]);
 
-        byId("statsData").innerHTML = "";
+        const [summary, offers, hotels, prices] = results;
 
-        const titles = [
-            "Összesítés",
-            "Ajánlatok városonként",
-            "Szállodák városonként",
-            "Átlagár városonként"
+        const statsData = byId("statsData");
+
+        // Korábbi diagramok törlése
+        statisticsCharts.forEach(chart => chart.destroy());
+        statisticsCharts = [];
+
+        // Korábbi tartalom törlése
+        statsData.innerHTML = "";
+
+        // Összesítő kártyák
+        const summaryContainer = document.createElement("div");
+        summaryContainer.className = "stats-summary";
+
+        const summaryItems = [
+            { title: "Városok", value: summary.cities },
+            { title: "Szállodák", value: summary.hotels },
+            { title: "Ajánlatok", value: summary.offers }
         ];
 
-        results.forEach((result, index) => {
-            byId("statsData").appendChild(
-                createCard(titles[index], JSON.stringify(result))
-            );
+        summaryItems.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "stats-summary-card";
+
+            card.innerHTML = `
+                <h4>${item.title}</h4>
+                <h2>${item.value}</h2>
+            `;
+
+            summaryContainer.appendChild(card);
         });
+
+        statsData.appendChild(summaryContainer);
+
+        // Diagramok létrehozása
+        const charts = [
+            {
+                title: "Ajánlatok városonként",
+                data: offers,
+                label: "Ajánlatok száma",
+                valueKey: "value",
+                color: "rgba(54, 162, 235, 0.7)"
+            },
+            {
+                title: "Szállodák városonként",
+                data: hotels,
+                label: "Szállodák száma",
+                valueKey: "value",
+                color: "rgba(75, 192, 192, 0.7)"
+            },
+            {
+                title: "Átlagár városonként",
+                data: prices,
+                label: "Átlagár (Ft)",
+                valueKey: "averagePrice",
+                color: "rgba(255, 159, 64, 0.7)"
+            }
+        ];
+
+        charts.forEach((item, index) => {
+            const container = document.createElement("div");
+            container.className = "card p-4 mb-4";
+
+            const title = document.createElement("h4");
+            title.textContent = item.title;
+
+            const canvas = document.createElement("canvas");
+            canvas.id = `statisticsChart${index}`;
+
+            container.appendChild(title);
+            container.appendChild(canvas);
+            statsData.appendChild(container);
+
+            const chart = new Chart(canvas, {
+                type: "bar",
+                data: {
+                    labels: item.data.map(entry => entry.city),
+                    datasets: [{
+                        label: item.label,
+                        data: item.data.map(entry => entry[item.valueKey]),
+                        backgroundColor: item.color,
+                        borderColor: item.color.replace("0.7", "1"),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            statisticsCharts.push(chart);
+        });
+
     } catch (error) {
         notify("Statisztikák betöltése sikertelen: " + error.message);
     }
 }
 
-function refreshAdmin() {
+function refreshAdmin(selected = {}) {
     if (user?.role !== "ADMIN") {
         notify("Admin jogosultság szükséges.");
         showPage("home");
         return;
     }
+
+    const previous = {
+        cityPick: byId("cityPick").value,
+        hotelPick: byId("hotelPick").value,
+        offerPick: byId("offerPick").value
+    };
 
     fillOptions(
         byId("cityPick"),
@@ -528,26 +645,65 @@ function refreshAdmin() {
             offer.ar
         )
         .join("\n");
+
+    Object.keys(previous).forEach(pickId => {
+        const select = byId(pickId);
+
+        select.value = String(selected[pickId] ?? previous[pickId]);
+
+        if (select.selectedIndex === -1) {
+            select.selectedIndex = 0;
+        }
+    });
+
+    loadPicked("cityPick", "cityForm", cities, "az");
+    loadPicked("hotelPick", "hotelForm", hotels, "az");
+    loadPicked("offerPick", "offerForm", offers, "id");
 }
 
 function setForm(form, data) {
     Object.keys(data).forEach(key => {
         if (form.elements[key]) {
-            form.elements[key].value = data[key] ?? "";
+            let value = data[key] ?? "";
+
+            if (typeof value === "boolean") {
+                value = Number(value);
+            }
+
+            form.elements[key].value = value;
         }
     });
 }
 
-async function saveEntity(path, id, data) {
+// A kiválasztott rekordot betölti az űrlapba; a kulcs mező szerkesztéskor csak olvasható
+function loadPicked(pickId, formId, items, key) {
+    const form = byId(formId);
+    const item = items.find(entry => String(entry[key]) === byId(pickId).value);
+
+    if (item) {
+        setForm(form, item);
+    } else {
+        form.reset();
+    }
+
+    if (form.elements[key]) {
+        form.elements[key].readOnly = key === "id" || Boolean(item);
+    }
+}
+
+async function saveEntity(path, id, data, pickId, key) {
     const method = id ? "PUT" : "POST";
     const url = id ? path + "/" + encodeURIComponent(id) : path;
 
     try {
-        await api(url, method, data);
+        const saved = await api(url, method, data);
 
         await loadAll();
 
-        refreshAdmin();
+        // szerkesztés után ugyanaz marad kiválasztva, új rekordnál az újonnan létrehozott
+        const savedId = id || (saved?.[key] ?? data[key] ?? "");
+
+        refreshAdmin({ [pickId]: savedId });
 
         notify("Mentés sikeres.");
     } catch (error) {
@@ -555,8 +711,9 @@ async function saveEntity(path, id, data) {
     }
 }
 
-async function deleteEntity(path, id) {
+async function deleteEntity(path, id, pickId) {
     if (!id) {
+        notify("Előbb válassz ki egy rekordot a listából.");
         return;
     }
 
@@ -569,7 +726,7 @@ async function deleteEntity(path, id) {
 
         await loadAll();
 
-        refreshAdmin();
+        refreshAdmin({ [pickId]: "" });
 
         notify("Törlés sikeres.");
     } catch (error) {
@@ -625,41 +782,18 @@ document.querySelectorAll("[data-admin]").forEach(button => {
     });
 });
 
-byId("cityPick").addEventListener("change", () => {
-    const city = cities.find(
-        item => String(item.az) === byId("cityPick").value
-    );
+byId("cityPick").addEventListener("change", () => loadPicked("cityPick", "cityForm", cities, "az"));
+byId("hotelPick").addEventListener("change", () => loadPicked("hotelPick", "hotelForm", hotels, "az"));
+byId("offerPick").addEventListener("change", () => loadPicked("offerPick", "offerForm", offers, "id"));
 
-    if (city) {
-        setForm(byId("cityForm"), city);
-    } else {
-        byId("cityForm").reset();
-    }
-});
-
-byId("hotelPick").addEventListener("change", () => {
-    const hotel = hotels.find(
-        item => String(item.az) === byId("hotelPick").value
-    );
-
-    if (hotel) {
-        setForm(byId("hotelForm"), hotel);
-    } else {
-        byId("hotelForm").reset();
-    }
-});
-
-byId("offerPick").addEventListener("change", () => {
-    const offer = offers.find(
-        item => String(item.id) === byId("offerPick").value
-    );
-
-    if (offer) {
-        setForm(byId("offerForm"), offer);
-    } else {
-        byId("offerForm").reset();
-    }
-});
+// "Új" gomb: a kiválasztás is törlődjön, különben a következő mentés a régi rekordot írná felül
+[["cityForm", "cityPick", "az"], ["hotelForm", "hotelPick", "az"], ["offerForm", "offerPick", "id"]]
+    .forEach(([formId, pickId, key]) => {
+        byId(formId).addEventListener("reset", () => {
+            byId(pickId).value = "";
+            byId(formId).elements[key].readOnly = key === "id";
+        });
+    });
 
 byId("cityForm").addEventListener("submit", async event => {
     event.preventDefault();
@@ -670,7 +804,9 @@ byId("cityForm").addEventListener("submit", async event => {
     await saveEntity(
         "/cities",
         byId("cityPick").value,
-        data
+        data,
+        "cityPick",
+        "az"
     );
 });
 
@@ -692,7 +828,9 @@ byId("hotelForm").addEventListener("submit", async event => {
     await saveEntity(
         "/hotels",
         byId("hotelPick").value,
-        data
+        data,
+        "hotelPick",
+        "az"
     );
 });
 
@@ -708,25 +846,29 @@ byId("offerForm").addEventListener("submit", async event => {
 
     if (id) {
         data.id = Number(id);
+    } else {
+        delete data.id; // új ajánlatnál az üres id ne menjen el a szervernek
     }
 
     await saveEntity(
         "/offers",
         id,
-        data
+        data,
+        "offerPick",
+        "id"
     );
 });
 
 byId("cityDelete").addEventListener("click", () => {
-    deleteEntity("/cities", byId("cityPick").value);
+    deleteEntity("/cities", byId("cityPick").value, "cityPick");
 });
 
 byId("hotelDelete").addEventListener("click", () => {
-    deleteEntity("/hotels", byId("hotelPick").value);
+    deleteEntity("/hotels", byId("hotelPick").value, "hotelPick");
 });
 
 byId("offerDelete").addEventListener("click", () => {
-    deleteEntity("/offers", byId("offerPick").value);
+    deleteEntity("/offers", byId("offerPick").value, "offerPick");
 });
 
 loadProfile().then(loadAll);

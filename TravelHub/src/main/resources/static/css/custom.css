@@ -120,3 +120,150 @@ table tr:hover td { background: #fffbea; }
   .navbar-nav .nav-item.active > a,
   .sticky .navbar-nav .nav-item.active > a { color: #b8920a; background: #fffbea; border-left-color: var(--brand); }
 }
+
+/* ---------- hibaüzenet a listákban ---------- */
+.list_error { grid-column: 1 / -1; margin: 0; padding: 18px 22px; border-left: 4px solid #dc3545; background: #fdecee; border-radius: 5px; color: #842029; text-align: left; overflow-wrap: anywhere; }
+
+
+/* ---------- Statisztikák ---------- */
+
+/* A statsData ne használja az általános kártyarácsot */
+#statsData {
+  display: block;
+  margin-top: 25px;
+  text-align: left;
+}
+
+/* Összesítő három kártyája */
+#statsData .row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0 0 35px;
+}
+
+#statsData .row > div {
+  padding: 0;
+  margin: 0;
+}
+
+#statsData .row .card {
+  height: 100%;
+  padding: 30px 20px;
+  text-align: center;
+  border: 0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 5px 30px rgba(56, 66, 77, .10);
+}
+
+#statsData .row .card h4 {
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+#statsData .row .card h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 36px;
+  font-weight: 700;
+}
+
+/* Diagramkártyák */
+#statsData > .card {
+  margin-bottom: 25px;
+  padding: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 5px 30px rgba(56, 66, 77, .10);
+}
+
+#statsData > .card h4 {
+  margin-bottom: 25px;
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+/* Nagy képernyő: két diagram egymás mellett */
+@media (min-width: 992px) {
+  #statsData {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+  }
+
+  #statsData .row {
+    grid-column: 1 / -1;
+  }
+
+  #statsData > .card {
+    margin: 0;
+    min-width: 0;
+  }
+
+  #statsData > .card:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Tablet és mobil */
+@media (max-width: 767px) {
+  #statsData .row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  #statsData .row .card {
+    padding: 20px;
+  }
+
+  #statsData .row .card h2 {
+    font-size: 30px;
+  }
+
+  #statsData > .card {
+    padding: 20px 15px;
+  }
+}
+
+/* Statisztikai összesítő kártyák */
+#statsData .stats-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+#statsData .stats-summary-card {
+  min-width: 0;
+  padding: 30px 20px;
+  text-align: center;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 30px rgba(56, 66, 77, .10);
+}
+
+#statsData .stats-summary-card h4 {
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+#statsData .stats-summary-card h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 36px;
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  #statsData .stats-summary {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
