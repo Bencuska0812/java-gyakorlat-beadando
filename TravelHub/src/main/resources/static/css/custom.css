@@ -83,3 +83,40 @@ table tr:hover td { background: #fffbea; }
 @media (max-width: 575px) {
   #login .contact_form, #register .contact_form { padding: 10px 22px 35px; }
 }
+
+/* ---------- Menü ---------- */
+.navbar-brand img { height: 36px; width: auto; }
+
+/* laptop/kis asztali: 9-12 menüpont elférjen egy sorban */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .navbar-nav .nav-item a { padding: 30px 8px; font-size: 14px; }
+}
+
+/* telefon + tablet: hamburger menü */
+@media (max-width: 991px) {
+  /* a fejléc ne lebegjen átlátszóan a hero kép fölött */
+  .header_navbar:not(.sticky) { background: rgba(56, 66, 77, .94); border-bottom: 0; }
+  .navbar { padding: 14px 0; }
+  .sticky .navbar { padding: 12px 0; }
+
+  /* nagyobb, könnyen eltalálható gomb */
+  .navbar-toggler { padding: 12px 0 12px 14px; border: 0; outline: 0; box-shadow: none; }
+  .navbar-toggler .toggler-icon { width: 28px; margin: 6px 0; border-radius: 2px; }
+
+  /* lenyíló panel: teljes szélesség, görgethető, ha nem fér ki */
+  .navbar-collapse {
+    left: -15px; width: calc(100% + 30px); padding: 6px 0 12px;
+    max-height: calc(100vh - 74px); overflow-y: auto; -webkit-overflow-scrolling: touch;
+    border-radius: 0 0 14px 14px; border-top: 3px solid var(--brand);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .18);
+  }
+  .navbar-nav .nav-item { border-bottom: 1px solid #f1f1f1; }
+  .navbar-nav .nav-item:last-child { border-bottom: 0; }
+  .navbar-nav .nav-item a {
+    padding: 15px 24px; font-size: 17px; font-weight: 500; color: var(--ink);
+    border-left: 4px solid transparent;
+  }
+  .navbar-nav .nav-item a:hover { background: #fffbea; color: var(--ink); }
+  .navbar-nav .nav-item.active > a,
+  .sticky .navbar-nav .nav-item.active > a { color: #b8920a; background: #fffbea; border-left-color: var(--brand); }
+}
